@@ -1,0 +1,29 @@
+from google.cloud import bigquery
+import json
+
+# Initialize BigQuery Client
+client = bigquery.Client()
+
+# Define your BQ Query
+query = """
+    SELECT country, SUM(day_sale_amount) AS total_sale
+    FROM `your_project.your_dataset.sales_table`
+    GROUP BY country
+"""
+
+# Execute Query
+query_job = client.query(query)
+
+# Fetch Results
+results = query_job.result()
+
+# Convert to List of Dicts
+data = [dict(row) for row in results]
+
+# Export to JSON File
+output_file = "bq_results.json"
+
+with open(output_file, "w") as f:
+    json.dump(data, f, indent=4)
+
+print(f"Exported results to {output_file}")
